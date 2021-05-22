@@ -15,4 +15,12 @@ public class LoadUtil {
             throw new Exception("Error has occurred. Please check files.");
         }
     }
+
+    public File loadFile(String filePath) throws Exception {
+        try {
+            return new File(filePath);
+        } catch (Exception e){
+            throw new Exception("Error has occurred. Please check files.");
+        }
+    }
 }
