@@ -19,7 +19,7 @@ public class CompressUtil {
     public void lzmaCompress(File file) throws Exception {
         try{
             InputStream in = Files.newInputStream(Path.of(file.getPath()));
-            OutputStream fout = Files.newOutputStream(Path.of("compressed.lzma"));
+            OutputStream fout = Files.newOutputStream(Path.of(file.getName().toLowerCase().replace(".txt", "") + "Compressed.lzma"));
             BufferedOutputStream out = new BufferedOutputStream(fout);
             LZMACompressorOutputStream lzOut = new LZMACompressorOutputStream(out);
             final byte[] buffer = new byte[1024];
@@ -38,7 +38,9 @@ public class CompressUtil {
         try {
             InputStream fin = Files.newInputStream(Path.of(file.getPath()));
             BufferedInputStream in = new BufferedInputStream(fin);
-            OutputStream out = Files.newOutputStream(Paths.get("decompressedFile.txt"));
+            OutputStream out = Files.newOutputStream(Paths.get(file.getName()
+                    .toLowerCase()
+                    .replace("compressed.lzma", "") + "decompressedFile.txt"));
             LZMACompressorInputStream lzmaIn = new LZMACompressorInputStream(in);
             final byte[] buffer = new byte[1024];
             int n = 0;
