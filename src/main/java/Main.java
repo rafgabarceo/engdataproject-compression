@@ -13,31 +13,32 @@ public class Main {
         List<File> loadedFilesForCompression = loadUtil.loadFiles(args);
         System.out.println("Compressing files...");
 
-        // compression
+        BrotliThread object = new BrotliThread(args, loadedFilesForCompression);
+        object.start();
+
+        // compression with LZMA
         Arrays.stream(args).forEach((file) -> {
             try {
                 long startTime = System.currentTimeMillis();
                 compressUtil.lzmaCompress(loadUtil.loadFile(file).getAbsoluteFile());
                 long endTime = System.currentTimeMillis();
-                System.out.println("Compression time of: " + file + " is " + (endTime - startTime) + "ms");
+                System.out.println("Compression time with LZMA is: " + file + " is " + (endTime - startTime) + "ms");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
+        // decompression with LZMA
         loadedFilesForCompression.forEach((file) -> {
-
             try {
                 String originalName = file.getName().replace(".txt", "");
                 long startTime = System.currentTimeMillis();
                 compressUtil.lzmaDecompress(new File("./" + originalName + "Compressed.lzma"));
                 long endTime = System.currentTimeMillis();
-                System.out.println("Decompression time of: " + file + " is " + (endTime - startTime) + "ms");
+                System.out.println("Decompression time with LZMA is: " + file + " is " + (endTime - startTime) + "ms");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        //compressUtil.lzmaCompress(loadedFilesForCompression.get(0));
-
     }
 }

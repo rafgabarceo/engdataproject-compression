@@ -1,6 +1,9 @@
 package utils;
 
 import com.nixxcode.jvmbrotli.common.BrotliLoader;
+import com.nixxcode.jvmbrotli.dec.BrotliInputStream;
+import com.nixxcode.jvmbrotli.enc.BrotliOutputStream;
+import com.nixxcode.jvmbrotli.enc.Encoder;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 
@@ -40,7 +43,7 @@ public class CompressUtil {
             BufferedInputStream in = new BufferedInputStream(fin);
             OutputStream out = Files.newOutputStream(Paths.get(file.getName()
                     .toLowerCase()
-                    .replace("compressed.lzma", "") + "decompressedFile.txt"));
+                    .replace("compressed.lzma", "") + "decompressedFileLZMA.txt"));
             LZMACompressorInputStream lzmaIn = new LZMACompressorInputStream(in);
             final byte[] buffer = new byte[1024];
             int n = 0;
@@ -54,13 +57,36 @@ public class CompressUtil {
         }
     }
 
-    public boolean brotliCompress(File file){
-        return false;
+    public void brotliCompress(File file) throws IOException {
+        FileInputStream fin = new FileInputStream(file.getPath());
+        FileOutputStream fout = new FileOutputStream(file.getPath().replace(".txt", "") + ".br");
+
+        Encoder.Parameters params = new Encoder.Parameters().setQuality(4);
+
+        BrotliOutputStream brotliOutputStream = new BrotliOutputStream(fout, params);
+
+        int read = fin.read();
+        while(read > -1){
+            brotliOutputStream.write(read);
+            read = fin.read();
+        }
+
+        brotliOutputStream.close();
+        fout.close();
     }
 
-    public boolean brotliDecompress(File file){
-        return false;
+    public void brotliDecompress(File file) throws IOException {
+        FileInputStream fin = new FileInputStream(file.getPath());
+        FileOutputStream fout = new FileOutputStream(file.getName().replace(".br", "") + "decompressedFileBrotli.txt");
+
+        BrotliInputStream brotliInputStream = new BrotliInputStream(fin);
+
+        int read = brotliInputStream.read();
+        while(read > -1){
+            fout.write(read);
+            read = brotliInputStream.read();
+        }
+        brotliInputStream.close();
+        fout.close();
     }
-
-
 }
